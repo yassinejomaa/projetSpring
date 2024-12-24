@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import lombok.AllArgsConstructor;
 import tn.iit.entity.Compte;
+import tn.iit.entity.Client;
 import tn.iit.service.CompteService;
+import tn.iit.service.ClientService;
 
 @AllArgsConstructor
 @Controller
@@ -22,9 +24,11 @@ import tn.iit.service.CompteService;
 public class CompteController {
 
 	private final CompteService compteService;
+	private final ClientService clientService;
 
 	@GetMapping({ "/all", "/", "/index" })
 	public String findAll(Model model) {
+		model.addAttribute("clients", clientService.findAll());
 		model.addAttribute("comptes", compteService.findAll());
 		return "comptes";
 	}
@@ -36,9 +40,10 @@ public class CompteController {
 	}
 
 	@PostMapping("/save")
-	public String save(@RequestParam String nomClient, @RequestParam float solde) {
-		//FIXME
-		Compte compte = null;//new Compte(nomClient, solde);
+	public String save(@RequestParam String clientCin, @RequestParam float solde) {
+		
+		Client c1=clientService.findById(clientCin);
+		Compte compte =new Compte(solde,c1);
 		compteService.saveOrUpdate(compte);
 		return "redirect:/comptes/all";
 	}

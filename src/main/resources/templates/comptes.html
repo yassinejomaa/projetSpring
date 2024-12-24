@@ -14,14 +14,13 @@
 				<td><input type="text" name="nomClient" /> </td>-->
 				<td>client </td>
 				<td>
-					<select>
-						<option th:each="client: ${clients}">
-							
-						</option>
-					
-						
-						
-					</select>
+					<select name="clientCin" required>
+					       <option value="" disabled selected>Select a client</option>
+					       <option th:each="client : ${clients}" 
+					               th:text="${client.nom} + ' ' + ${client.prenom}" 
+					               th:value="${client.cin}">
+					       </option>
+					   </select>
 					
 				</td>
 				
