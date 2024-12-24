@@ -10,8 +10,21 @@
 	<form th:action="@{save}" method="post">
 		<table>
 			<tr>
-				<td>nomClient </td>
-				<td><input type="text" name="nomClient" /> </td>
+				<!--<td>nomClient </td>
+				<td><input type="text" name="nomClient" /> </td>-->
+				<td>client </td>
+				<td>
+					<select>
+						<option th:each="client: ${clients}">
+							
+						</option>
+					
+						
+						
+					</select>
+					
+				</td>
+				
 			</tr>
 			<tr>
 				<td>solde </td>

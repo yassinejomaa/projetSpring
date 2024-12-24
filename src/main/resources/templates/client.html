@@ -1,0 +1,62 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<title>Client Management</title>
+	<link href="/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+	<h1>Add new Client</h1>
+	<form th:action="@{save}" method="post">
+		<table>
+			<tr>
+				<td>cin </td>
+				<td><input type="text" name="cin" /> </td>
+			</tr>
+			<tr>
+				<td>nom </td>
+				<td><input type="text" name="nom" /> </td>
+			</tr>
+			<tr>
+				<td>prenom </td>
+				<td><input type="text" name="prenom" /> </td>
+			</tr>
+			<tr>
+				<td><input type="submit" value="save" class="btn btn-primary" /> </td>
+				<td> </td>
+			</tr>
+		</table>
+	</form>
+	<hr />
+	<h1>List of Client</h1>
+	<table class="table table-striped">
+		<tr>
+			<th>cin</th>
+			<th>nom Client</th>
+			<th>prenom</th>
+			<th>delete</th>
+			<th>delete-ajax</th>
+			<th>Edit</th>
+		</tr>
+		<tr th:id="${client.cin}" th:each="client: ${clients}">
+			<td th:text="${client.cin}" />
+			<td th:text="${client.nom}" />
+			<td th:text="${client.prenom}" />
+			<td><a th:href="'/clients/delete/'+${client.cin}" class="btn btn-danger">delete</a></td>
+			<td><a th:href="|javascript:deleteClient(${compte.cin})|" class="btn btn-success">delete-ajax</a></td>
+			<td>
+				<form th:action="@{edit}" method="post">
+					<input type="hidden" name="cin" th:value="${client.cin}" />
+					<input type="submit" value="edit" class="btn btn-secondary" />
+				</form>
+			</td>
+		</tr>
+	</table>
+
+	<script src="/js/bootstrap.bundle.min.js"></script>
+	<script src="/js/jquery-3.7.1.min.js"></script>
+	<script src="/js/sweetalert.min.js"></script>
+	<script src="/js/comptes.js"></script>
+</body>
+
+</html>
