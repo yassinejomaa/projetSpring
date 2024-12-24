@@ -30,3 +30,6 @@ function deleteCompte(rib) {
 	
 	
 }
+$("#fruits").select2({
+			  tags: true
+			});

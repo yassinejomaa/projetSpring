@@ -25,7 +25,7 @@ public class ClientController {
 
 	@GetMapping({ "/all", "/", "/index" })
 	public String findAll(Model model) {
-		model.addAttribute("client", clientService.findAll());
+		model.addAttribute("clients", clientService.findAll());
 		return "client";
 	}
 

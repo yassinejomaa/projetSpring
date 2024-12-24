@@ -38,6 +38,12 @@ public class CompteController {
 	public List<Compte> findAllJson() {
 		return compteService.findAll();
 	}
+	
+	@GetMapping("/all-json-client")
+	public List<Client> findAllJsonClient() {
+		return clientService.findAll();
+	}
+
 
 	@PostMapping("/save")
 	public String save(@RequestParam String clientCin, @RequestParam float solde) {

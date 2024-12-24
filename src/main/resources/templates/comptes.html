@@ -3,6 +3,8 @@
 <head>
 	<title>Comptes Management</title>
 	<link href="/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/css/select2.min.css" rel="stylesheet" />
+	<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -14,7 +16,7 @@
 				<td><input type="text" name="nomClient" /> </td>-->
 				<td>client </td>
 				<td>
-					<select name="clientCin" required>
+					<select name="clientCin" required class="form-control .js-example-tags" id="client">
 					       <option value="" disabled selected>Select a client</option>
 					       <option th:each="client : ${clients}" 
 					               th:text="${client.nom} + ' ' + ${client.prenom}" 
@@ -60,11 +62,18 @@
 			</td>
 		</tr>
 	</table>
-
+	<script src="/js/select2.min.js"></script>
 	<script src="/js/bootstrap.bundle.min.js"></script>
 	<script src="/js/jquery-3.7.1.min.js"></script>
 	<script src="/js/sweetalert.min.js"></script>
 	<script src="/js/comptes.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+	<script>
+		$("#client").select2({
+			  tags: false
+			});
+	</script>
+
 </body>
 
 </html>

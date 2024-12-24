@@ -43,7 +43,7 @@
 			<td th:text="${client.nom}" />
 			<td th:text="${client.prenom}" />
 			<td><a th:href="'/clients/delete/'+${client.cin}" class="btn btn-danger">delete</a></td>
-			<td><a th:href="|javascript:deleteClient(${compte.cin})|" class="btn btn-success">delete-ajax</a></td>
+			<td><a th:href="|javascript:deleteClient(${client.cin})|" class="btn btn-success">delete-ajax</a></td>
 			<td>
 				<form th:action="@{edit}" method="post">
 					<input type="hidden" name="cin" th:value="${client.cin}" />
