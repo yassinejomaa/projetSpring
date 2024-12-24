@@ -1,0 +1,81 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+	<title>Students Management</title>
+
+</head>
+
+
+
+<body>
+
+	<h1>add new student</h1>
+	<form th:action="@{save}" method="post">
+		<table>
+			<tr>
+				<td>id</td>
+				<td><input type="number" name="id" /></td>
+
+			</tr>
+
+			<tr>
+				<td>FirstName</td>
+				<td><input type="text" name="firstName" /></td>
+
+			</tr>
+
+			<tr>
+				<td>lastName</td>
+				<td><input type="text" name="lastName" /></td>
+
+			</tr>
+
+
+			<tr>
+				<td><input type="submit" value="save"></td>
+				<td></td>
+
+			</tr>
+
+
+
+		</form>
+		</table>
+		<hr />
+		<h1>List of Students</h1>
+		
+		<table style="border: 1px solid black;">
+			<tr>
+				<th>id</th>
+				<th>FirstName</th>
+				<th>lastName</th>
+				<th>delete</th>
+				<th>edit</th>
+
+			</tr>
+			<tr th:each="student: ${students}">
+				<td th:text="${student.id}" />
+				<td th:text="${student.firstName}" />
+				<td th:text="${student.lastName}" />
+				<td><a th:href="'/students/delete/'+${student.id}">delete</a></td>
+				<td>
+					<form th:action="@{edit}" method="post">
+						<input type="hidden" name="id"  th:value="${student.id}"/>
+						<td><input type="submit" value="edit"></td>
+					</form>
+					
+				</td>
+
+			</tr>
+		</table>
+
+
+
+	
+
+</body>
+
+
+
+</html>
