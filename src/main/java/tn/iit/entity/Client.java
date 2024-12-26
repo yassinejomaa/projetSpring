@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
@@ -37,7 +38,7 @@ public class Client implements Serializable {
 	private String prenom;
 	@JsonIgnore //casser la boucle Json
 	@Exclude // casser la boucle toString
-	@OneToMany(mappedBy = "client") // n'ajoute rien dans la base
+	@OneToMany(mappedBy = "client",cascade = CascadeType.ALL, orphanRemoval = true) // n'ajoute rien dans la base
 	private List<Compte> comptes;
 
 	public Client(String cin, String nom, String prenom) {

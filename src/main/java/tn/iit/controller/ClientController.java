@@ -28,6 +28,14 @@ public class ClientController {
 		model.addAttribute("clients", clientService.findAll());
 		return "client";
 	}
+	
+	
+	@ResponseBody // json
+	@GetMapping({ "/editModal" })
+	public Client editModal(@RequestParam String cin) {
+		Client c=clientService.findById(cin);
+		return c;
+	}
 
 	@ResponseBody // json
 	@GetMapping("/all-json")
@@ -40,6 +48,14 @@ public class ClientController {
 		//FIXME
 		Client client =new Client(cin, nom,prenom);
 		clientService.saveOrUpdate(client);
+		return "redirect:/clients/all";
+	}
+	
+	@PostMapping("/saveModale")
+	public String saveModale(Client c) {
+		//FIXME
+		
+		clientService.saveOrUpdate(c);
 		return "redirect:/clients/all";
 	}
 

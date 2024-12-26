@@ -3,60 +3,148 @@
 <head>
 	<title>Client Management</title>
 	<link href="/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/css/client.css" rel="stylesheet">
 </head>
 
 <body>
-	<h1>Add new Client</h1>
-	<form th:action="@{save}" method="post">
-		<table>
-			<tr>
-				<td>cin </td>
-				<td><input type="text" name="cin" /> </td>
-			</tr>
-			<tr>
-				<td>nom </td>
-				<td><input type="text" name="nom" /> </td>
-			</tr>
-			<tr>
-				<td>prenom </td>
-				<td><input type="text" name="prenom" /> </td>
-			</tr>
-			<tr>
-				<td><input type="submit" value="save" class="btn btn-primary" /> </td>
-				<td> </td>
-			</tr>
-		</table>
-	</form>
+
+	<!--modale pour ajouter-->
+
+	<button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#Modaleadd"><img src="/image/plus.png" id="add">Ajouter un nouveaux client</button>
+
+	<div class="modal fade" id="Modaleadd" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Ajouter un client</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+				</div>
+				<div class="modal-body">
+					<form id="modalForm">
+
+						<div class="mb-3">
+							<label for="cin" class="form-label">cin</label>
+							<input type="text" class="form-control" id="cin" name="cin" required>
+						</div>
+
+						<div class="mb-3">
+							<label for="nom" class="form-label">nom</label>
+							<input type="text" class="form-control" id="nom" name="nom" required>
+
+						</div>
+
+						<div class="mb-3">
+							<label for="prenom" class="form-label">prenom</label>
+							<input type="text" class="form-control" id="prenom" name="prenom" required>
+
+						</div>
+
+
+
+						<button type="submit" class="btn btn-primary" onclick="insert()" id="save">Enregistrer</button>
+
+					</form>
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+
+
+	<!--Modale update-->
+
+
+
+
+
+
+
+	<!--Modale pour modifier-->
+
+
+	<div class="modal fade" id="ModaleUpdate" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">modifier un client</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+				</div>
+				<div class="modal-body">
+					<form id="modalForm">
+
+
+						<div class="mb-3">
+							<label for="cinUpdate" class="form-label">Cin</label>
+							<input type="text" class="form-control" id="cinUpdate" name="cinUpdate" required>
+						</div>
+
+						<div class="mb-3">
+							<label for="nomUpdate" class="form-label">Nom</label>
+							<input type="text" class="form-control" id="nomUpdate" name="nomUpdate" required>
+						</div>
+
+						<div class="mb-3">
+							<label for="prenomUpdate" class="form-label">prenom</label>
+							<input type="text" class="form-control" id="prenomUpdate" name="prenomUpdate" required>
+						</div>
+
+
+
+
+						<button type="submit" class="btn btn-warning" onclick="updateClient()" id="update">update</button>
+					</form>
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+
+	
 	<hr />
 	<h1>List of Client</h1>
 	<table class="table table-striped">
-		<tr>
-			<th>cin</th>
-			<th>nom Client</th>
-			<th>prenom</th>
-			<th>delete</th>
-			<th>delete-ajax</th>
-			<th>Edit</th>
-		</tr>
-		<tr th:id="${client.cin}" th:each="client: ${clients}">
-			<td th:text="${client.cin}" />
-			<td th:text="${client.nom}" />
-			<td th:text="${client.prenom}" />
-			<td><a th:href="'/clients/delete/'+${client.cin}" class="btn btn-danger">delete</a></td>
-			<td><a th:href="|javascript:deleteClient(${client.cin})|" class="btn btn-success">delete-ajax</a></td>
-			<td>
-				<form th:action="@{edit}" method="post">
-					<input type="hidden" name="cin" th:value="${client.cin}" />
-					<input type="submit" value="edit" class="btn btn-secondary" />
-				</form>
-			</td>
-		</tr>
+		<thead>
+			<tr>
+				<th>cin</th>
+				<th>nom Client</th>
+				<th>prenom</th>
+				<th>delete-ajax</th>
+				<th>Edit</th>
+			</tr>
+		</thead>
+		<tbody id="tbody">
+			<tr th:id="${client.cin}" th:each="client: ${clients}">
+				<td th:text="${client.cin}" />
+				<td th:text="${client.nom}" />
+				<td th:text="${client.prenom}" />
+				<td><a th:href="|javascript:deleteClient(${client.cin})|"><img src="/image/delete.png" class="image"></a></td>
+				<td>
+					<a th:href="|javascript:edit(${client.cin})|" ><button data-bs-toggle="modal" data-bs-target="#ModaleUpdate" class="button"><img src="/image/pencil.png" class="image"></button></a>
+				</td>
+			</tr>
+		</tbody>
 	</table>
 
 	<script src="/js/bootstrap.bundle.min.js"></script>
 	<script src="/js/jquery-3.7.1.min.js"></script>
 	<script src="/js/sweetalert.min.js"></script>
-	<script src="/js/comptes.js"></script>
+	<script src="/js/clients.js"></script>
 </body>
 
 </html>
