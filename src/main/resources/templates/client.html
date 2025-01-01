@@ -10,8 +10,9 @@
 
 	<!--modale pour ajouter-->
 
-	<button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#Modaleadd"><img
-			src="/image/plus.png" id="add">Ajouter un nouveaux client</button>
+	<button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#Modaleadd">
+		<img src="/image/plus.png" id="add">Ajouter un nouveau client
+	</button>
 
 	<div class="modal fade" id="Modaleadd" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
@@ -21,29 +22,25 @@
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
 				</div>
 				<div class="modal-body">
-					<form id="modalForm">
-
+					<form id="modalForm" onsubmit="return handleFormSubmit(event)">
 						<div class="mb-3">
-							<label for="cin" class="form-label">cin</label>
-							<input type="text" class="form-control" id="cin" name="cin" required>
+							<label for="cin" class="form-label">CIN</label>
+							<input type="text" class="form-control" id="cin" name="cin" pattern="^\d{8}$"
+								title="Le CIN doit contenir exactement 8 chiffres." required>
 						</div>
 
 						<div class="mb-3">
-							<label for="nom" class="form-label">nom</label>
+							<label for="nom" class="form-label">Nom</label>
 							<input type="text" class="form-control" id="nom" name="nom" required>
-
 						</div>
 
 						<div class="mb-3">
-							<label for="prenom" class="form-label">prenom</label>
+							<label for="prenom" class="form-label">Prénom</label>
 							<input type="text" class="form-control" id="prenom" name="prenom" required>
-
 						</div>
 
-
-
-						<button type="submit" class="btn btn-primary" onclick="insert()" id="save">Enregistrer</button>
-
+						<!-- Retirer l'attribut onclick -->
+						<input type="submit" class="btn btn-primary" id="save">
 					</form>
 
 				</div>
@@ -53,7 +50,6 @@
 			</div>
 		</div>
 	</div>
-
 
 
 
@@ -142,19 +138,23 @@
 				<td th:text="${client.cin}" />
 				<td th:text="${client.nom}" />
 				<td th:text="${client.prenom}" />
-				<td><a th:href="|javascript:deleteClient(${client.cin})|"><img src="/image/delete.png"
+				<td><a th:href="|javascript:deleteClient('${client.cin}')|"><img src="/image/delete.png"
 							class="image"></a></td>
 				<td>
-					<a th:href="|javascript:edit(${client.cin})|"><button data-bs-toggle="modal"
-							data-bs-target="#ModaleUpdate" class="button"><img src="/image/pencil.png"
-								class="image"></button></a>
+					<a th:href="|javascript:edit('${client.cin}')|">
+						<button data-bs-toggle="modal" data-bs-target="#ModaleUpdate" class="button">
+							<img src="/image/pencil.png" class="image">
+						</button>
+					</a>
 				</td>
+
 			</tr>
 		</tbody>
 	</table>
-	<ul class="nav nav-pills">
+	<ul class="nav nav-pills" id="pagination">
 		<li th:each="page,status:${pages}">
-			<a th:class="${status.index == currentPage ? 'btn btn-info ms-1' : 'btn btn-outline ms-1'}" th:text="${status.index}" th:href="@{index(page=${status.index},Keyword=${Keyword})}"></a>
+			<a th:class="${status.index == currentPage ? 'btn btn-info ms-1' : 'btn btn-outline ms-1'}"
+				th:text="${status.index}" th:href="@{index(page=${status.index},Keyword=${Keyword})}"></a>
 		</li>
 	</ul>
 

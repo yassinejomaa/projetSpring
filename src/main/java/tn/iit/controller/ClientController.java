@@ -37,7 +37,7 @@ public class ClientController {
 
 	@GetMapping({ "/all", "/", "/index" })
 	public String findAll(Model model, @RequestParam(name = "page", defaultValue = "0") int page,
-			@RequestParam(name = "size", defaultValue = "1") int size,
+			@RequestParam(name = "size", defaultValue = "5") int size,
 			@RequestParam(name = "Keyword", defaultValue = "") String Keyword) {
 
 		Page<Client> clients;
@@ -57,9 +57,12 @@ public class ClientController {
 	}
 
 	@ResponseBody // json
-	@GetMapping({ "/editModal" })
+	@GetMapping("/editModal" )
 	public Client editModal(@RequestParam String cin) {
 		Client c = clientService.findById(cin);
+		System.out.println(cin);
+		System.out.println("hello");
+		System.out.println(c);
 		return c;
 	}
 
@@ -68,14 +71,28 @@ public class ClientController {
 	public List<Client> findAllJson() {
 		return clientService.findAll();
 	}*/
+	@ResponseBody
 	 @GetMapping("/all-json")
 	    public ResponseEntity<Page<Client>> getAllClients(
 	            @RequestParam(defaultValue = "0") int page,
-	            @RequestParam(defaultValue = "1") int size) {
+	            @RequestParam(defaultValue = "5") int size) {
 	        Pageable pageable = PageRequest.of(page, size);
 	        Page<Client> clients = clientService.getAllClients(pageable);
 	        return ResponseEntity.ok(clients);
 	    }
+	
+	
+	
+	
+	
+	
+	@ResponseBody // json
+	@GetMapping("/all-json-autocomplete")
+	public List<Client> findAllJson() {
+		return clientService.findAll();
+	}
+	
+	
 
 	@PostMapping("/save")
 	public String save(@RequestParam String cin, @RequestParam String nom, @RequestParam String prenom) {
@@ -108,6 +125,7 @@ public class ClientController {
 	@PostMapping("/edit")
 	public String edit(@RequestParam String cin, Model model) {
 		Client client = clientService.findById(cin);
+		
 		model.addAttribute("client", client);
 
 		return "client-edit";

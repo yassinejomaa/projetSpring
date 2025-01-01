@@ -1,3 +1,4 @@
+var currentPage = 0;
 function insert() {
 	console.log("hello");
 	event.preventDefault();
@@ -39,51 +40,70 @@ function insert() {
 }
 
 
-function getClient(page = 0, size = 1) {
+// Fonction pour récupérer les clients et afficher la page actuelle
+function getClient(page = 0, size = 5) {
+
 	$.ajax({
 		url: `/clients/all-json?page=${page}&size=${size}`,
 		type: 'get',
 		dataType: 'json',
 		contentType: 'application/json; charset=utf-8',
 		success: function(response) {
+			console.log(response);
 			if (response && response.content && response.content.length > 0) {
-				var object = '';
+				var tableContent = '';
 				$.each(response.content, function(index, item) {
-					object += '<tr>';
-					object += '<td>' + item.cin + '</td>';
-					object += '<td>' + item.nom + '</td>';
-					object += '<td>' + item.prenom + '</td>';
-					object += '<td>';
-					object += '<button onclick="deleteClient(' + item.cin + ')" class="button"><img src="/image/delete.png" class="image"></button>';
-					object += '</td>';
-					object += '<td>';
-					object += '<button onclick="edit(' + item.cin + ')" data-bs-toggle="modal" data-bs-target="#ModaleUpdate" class="button"><img src="/image/pencil.png" class="image"></button>';
-					object += '</td>';
-					object += '</tr>';
+					tableContent += `
+                        <tr>
+                            <td>${item.cin}</td>
+                            <td>${item.nom}</td>
+                            <td>${item.prenom}</td>
+                            <td>
+							<button onclick="deleteClient('${item.cin}')" class="button">
+							    <img src="/image/delete.png" class="image">
+							</button>
+
+                            </td>
+                            <td>
+							<button onclick="edit('${item.cin}', ${page})" data-bs-toggle="modal" data-bs-target="#ModaleUpdate" class="button">
+							    <img src="/image/pencil.png" class="image">
+							</button>
+
+                            </td>
+                        </tr>`;
 				});
-
-				$('#tbody').html(object);
-
-				// Met à jour la pagination
-				updatePagination(response);
+				$('#tbody').html(tableContent); // Mettre à jour le contenu du tableau
+				currentPage = response.pageable.pageNumber;
+				updatePagination(response); // Mettre à jour la pagination
 			} else {
 				$('#tbody').html('<tr><td colspan="5">Aucun client trouvé.</td></tr>');
+				$('#pagination').html(''); // Vider la pagination
 			}
 		},
 		error: function() {
-			alert('Impossible de lire les données');
+			alert('Erreur lors de la récupération des données');
 		}
 	});
+
+
 }
+
 function updatePagination(response) {
-	var paginationHtml = '';
+	var pagination = '';
 	if (response.totalPages > 1) {
-		for (var i = 0; i < response.totalPages; i++) {
-			paginationHtml += `<button onclick="getClient(${i})" class="pagination-button">${i + 1}</button>`;
+		for (let i = 0; i < response.totalPages; i++) {
+			pagination += `
+                <li>
+                    <a class="${i === response.pageable.pageNumber ? 'btn btn-info ms-1' : 'btn btn-outline ms-1'}"
+                        onclick="getClient(${i})">${i + 1}</a>
+                </li>`;
 		}
 	}
-	$('#pagination').html(paginationHtml);
+	$('#pagination').html(pagination);
+	console.log("Pagination mise à jour");
 }
+
+
 
 function deleteClient(cin) {
 
@@ -121,6 +141,8 @@ function deleteClient(cin) {
 
 
 function edit(cin) {
+	console.log(typeof (cin));
+	console.log(cin);
 	$.ajax({
 		url: '/clients/editModal?cin=' + cin,
 		type: 'get',
@@ -151,7 +173,10 @@ function edit(cin) {
 function updateClient() {
 	event.preventDefault();
 
+
+
 	var cin = $('#cinUpdate').val();
+
 	var nom = $('#nomUpdate').val();
 	var prenom = $('#prenomUpdate').val();
 
@@ -172,7 +197,10 @@ function updateClient() {
 			if (reponse == null || reponse == undefined || reponse.length == 0) {
 				alert('Il y a une erreur');
 			} else {
-				getClient();  // Actualisation de la liste des clients
+
+				getClient();
+
+				// Actualisation de la liste des clients
 			}
 		},
 		error: function() {
@@ -184,17 +212,22 @@ function updateClient() {
 
 function autocomplet() {
 	$.ajax({
-		url: '/clients/all-json',
+		url: '/clients/all-json-autocomplete',
 		type: 'get',
 		dataType: 'json',
 		contentType: 'application/json; charset=utf-8',
 		success: function(response) {
+			console.log(response);
 			if (response && response.length > 0) {
+				// Supprimer les doublons
+				const uniqueNames = [...new Set(response.map(item => item.nom))];
+
 				// Transformer les données pour l'autocomplétion
-				const transformedData = response.map(item => ({
-					label: item.nom, // Utilise la valeur de "nom" comme label pour l'autocomplétion
-					value: item.nom   // Utilise la valeur de "nom" pour la valeur de l'élément sélectionné
+				const transformedData = uniqueNames.map(name => ({
+					label: name, // Utilise le nom comme label pour l'autocomplétion
+					value: name  // Utilise le nom pour la valeur de l'élément sélectionné
 				}));
+				console.log(transformedData);
 
 				// Initialiser l'autocomplétion avec les données transformées
 				$('#txtRequestor').autocomplete({
@@ -220,6 +253,14 @@ function autocomplet() {
 		}
 	});
 }
+function handleFormSubmit(event) {
+  // Empêcher la soumission automatique pour effectuer des contrôles supplémentaires si nécessaire
+  event.preventDefault();
+
+  // Vous pouvez appeler insert() ici si vous avez des vérifications supplémentaires à faire
+  return insert();
+}
+
 
 
 autocomplet()
