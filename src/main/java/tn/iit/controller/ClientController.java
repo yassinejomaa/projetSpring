@@ -1,19 +1,31 @@
 package tn.iit.controller;
 
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.springframework.data.domain.Pageable;
+
+
 import lombok.AllArgsConstructor;
 import tn.iit.entity.Client;
+import tn.iit.entity.Compte;
 import tn.iit.service.ClientService;
 
 @AllArgsConstructor
@@ -24,37 +36,59 @@ public class ClientController {
 	private final ClientService clientService;
 
 	@GetMapping({ "/all", "/", "/index" })
-	public String findAll(Model model) {
-		model.addAttribute("clients", clientService.findAll());
+	public String findAll(Model model, @RequestParam(name = "page", defaultValue = "0") int page,
+			@RequestParam(name = "size", defaultValue = "1") int size,
+			@RequestParam(name = "Keyword", defaultValue = "") String Keyword) {
+
+		Page<Client> clients;
+
+		if (Keyword.isEmpty()) {
+			clients = clientService.findAllPageable(page, size);
+		} else {
+			clients = clientService.findByNom(Keyword, page, size);
+		}
+
+		model.addAttribute("clients", clients.getContent());
+		model.addAttribute("pages", new int[clients.getTotalPages()]);
+		model.addAttribute("currentPage", page);
+		model.addAttribute("Keyword", Keyword);
+
 		return "client";
 	}
-	
-	
+
 	@ResponseBody // json
 	@GetMapping({ "/editModal" })
 	public Client editModal(@RequestParam String cin) {
-		Client c=clientService.findById(cin);
+		Client c = clientService.findById(cin);
 		return c;
 	}
 
-	@ResponseBody // json
+	/*@ResponseBody // json
 	@GetMapping("/all-json")
 	public List<Client> findAllJson() {
 		return clientService.findAll();
-	}
+	}*/
+	 @GetMapping("/all-json")
+	    public ResponseEntity<Page<Client>> getAllClients(
+	            @RequestParam(defaultValue = "0") int page,
+	            @RequestParam(defaultValue = "1") int size) {
+	        Pageable pageable = PageRequest.of(page, size);
+	        Page<Client> clients = clientService.getAllClients(pageable);
+	        return ResponseEntity.ok(clients);
+	    }
 
 	@PostMapping("/save")
-	public String save(@RequestParam String cin,@RequestParam String nom,@RequestParam String prenom) {
-		//FIXME
-		Client client =new Client(cin, nom,prenom);
+	public String save(@RequestParam String cin, @RequestParam String nom, @RequestParam String prenom) {
+		// FIXME
+		Client client = new Client(cin, nom, prenom);
 		clientService.saveOrUpdate(client);
 		return "redirect:/clients/all";
 	}
-	
+	@ResponseBody
 	@PostMapping("/saveModale")
 	public String saveModale(Client c) {
-		//FIXME
-		
+		// FIXME
+		System.out.println(c);
 		clientService.saveOrUpdate(c);
 		return "redirect:/clients/all";
 	}
@@ -78,11 +112,27 @@ public class ClientController {
 
 		return "client-edit";
 	}
+	@ResponseBody
+	@PutMapping("/update/{cin}")
+	public ResponseEntity<String> update(@PathVariable String cin, @RequestBody Client client) {
+	    try {
+	        Client clientAModifier = clientService.findById(cin);
+	        
+	        if (client.getNom() != null) {
+	            clientAModifier.setNom(client.getNom());
+	        }
 
-	@PostMapping("/update")
-	public String update(@ModelAttribute Client client) {
-		clientService.saveOrUpdate(client);
-		return "redirect:/clients/all";
+	        if (client.getPrenom() != null) {
+	            clientAModifier.setPrenom(client.getPrenom());
+	        }
+
+	        clientService.saveOrUpdate(clientAModifier);
+	        return ResponseEntity.ok("Mise à jour réussie");
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(500).body("Erreur lors de la mise à jour");
+	    }
 	}
+
 
 }

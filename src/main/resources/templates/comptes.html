@@ -3,64 +3,164 @@
 <head>
 	<title>Comptes Management</title>
 	<link href="/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/css/compte.css" rel="stylesheet">
 	<link href="/css/select2.min.css" rel="stylesheet" />
 	<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 </head>
 
+
 <body>
-	<h1>Add new Compte</h1>
-	<form th:action="@{save}" method="post">
-		<table>
-			<tr>
-				<!--<td>nomClient </td>
-				<td><input type="text" name="nomClient" /> </td>-->
-				<td>client </td>
-				<td>
-					<select name="clientCin" required class="form-control .js-example-tags" id="client">
-					       <option value="" disabled selected>Select a client</option>
-					       <option th:each="client : ${clients}" 
-					               th:text="${client.nom} + ' ' + ${client.prenom}" 
-					               th:value="${client.cin}">
-					       </option>
-					   </select>
-					
-				</td>
-				
-			</tr>
-			<tr>
-				<td>solde </td>
-				<td><input type="text" name="solde" /> </td>
-			</tr>
-			<tr>
-				<td><input type="submit" value="save" class="btn btn-primary" /> </td>
-				<td> </td>
-			</tr>
-		</table>
-	</form>
+
+
+
+
+
+
+
+
+
+
+	<!--modale pour ajouter-->
+
+	<button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#Modaleadd"><img
+			src="/image/plus.png" id="add">Ajouter un nouveaux client</button>
+
+	<div class="modal fade" id="Modaleadd" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Ajouter un compte</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+				</div>
+				<div class="modal-body">
+					<form id="modalForm">
+
+						<div class="mb-3">
+							<label for="cin" class="form-label">client</label>
+							<select name="clientCin" required class="form-control" id="client1">
+								<option value="" disabled selected>Select a client</option>
+								<option th:each="client : ${clients}" th:text="${client.nom} + ' ' + ${client.prenom}"
+									th:value="${client.cin}">
+								</option>
+							</select>
+						</div>
+
+						<div class="mb-3">
+							<label for="solde" class="form-label">solde</label>
+							<input type="text" class="form-control" id="solde" name="solde" required>
+
+						</div>
+
+
+
+
+
+						<button type="submit" class="btn btn-primary" onclick="insert()" id="save">Enregistrer</button>
+
+					</form>
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+	<!--Modale pour modifier-->
+
+
+	<div class="modal fade" id="ModaleUpdate" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">modifier un compte</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+				</div>
+				<div class="modal-body">
+					<form id="modalForm">
+
+						<div class="mb-3">
+							<label for="rib" class="form-label">rib</label>
+							<input type="hidden" class="form-control" id="ribUpdate" name="rib" required>
+
+						</div>
+						<div class="mb-3">
+							<label for="cin" class="form-label">client</label>
+							<select name="clientCinUpdate" required class="form-control" id="client">
+								<option value="" disabled selected>Select a client</option>
+								<option th:each="client : ${clients}" th:text="${client.nom} + ' ' + ${client.prenom}"
+									th:value="${client.cin}">
+								</option>
+							</select>
+						</div>
+
+						<div class="mb-3">
+							<label for="solde" class="form-label">solde</label>
+							<input type="text" class="form-control" id="soldeUpdate" name="solde" required>
+
+						</div>
+
+
+
+
+
+						<button type="submit" class="btn btn-warning" onclick="updateCompte()"
+							id="update">update</button>
+					</form>
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	<hr />
 	<h1>List of Comptes</h1>
 	<table class="table table-striped">
-		<tr>
-			<th>id</th>
-			<th>nomClient</th>
-			<th>solde</th>
-			<th>delete</th>
-			<th>delete-ajax</th>
-			<th>Edit</th>
-		</tr>
-		<tr th:id="${compte.rib}" th:each="compte: ${comptes}">
-			<td th:text="${compte.rib}" />
-			<td th:text="${compte.client.nomComplet}" />
-			<td th:text="${compte.solde}" />
-			<td><a th:href="'/comptes/delete/'+${compte.rib}" class="btn btn-danger">delete</a></td>
-			<td><a th:href="|javascript:deleteCompte(${compte.rib})|" class="btn btn-success">delete-ajax</a></td>
-			<td>
-				<form th:action="@{edit}" method="post">
-					<input type="hidden" name="rib" th:value="${compte.rib}" />
-					<input type="submit" value="edit" class="btn btn-secondary" />
-				</form>
-			</td>
-		</tr>
+		<thead>
+			<tr>
+				<th>id</th>
+				<th>nomClient</th>
+				<th>solde</th>
+				<th>delete-ajax</th>
+				<th>Edit</th>
+
+			</tr>
+		</thead>
+		<tbody id="tbody">
+			<tr th:id="${compte.rib}" th:each="compte: ${comptes}">
+				<td th:text="${compte.rib}" />
+				<td th:text="${compte.client.nomComplet}" />
+				<td th:text="${compte.solde}" />
+				<td><a th:href="|javascript:deleteCompte(${compte.rib})|"><img src="/image/delete.png"
+							class="image"></a></td>
+				<td>
+					<a th:href="|javascript:edit(${compte.rib})|"><button data-bs-toggle="modal"
+							data-bs-target="#ModaleUpdate" class="button"><img src="/image/pencil.png"
+								class="image"></button></a>
+				</td>
+			</tr>
+		</tbody>
 	</table>
 	<script src="/js/select2.min.js"></script>
 	<script src="/js/bootstrap.bundle.min.js"></script>
@@ -69,9 +169,19 @@
 	<script src="/js/comptes.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 	<script>
-		$("#client").select2({
-			  tags: false
+		// Initialisation de Select2 après l'ouverture du modal
+		$('#Modaleadd').on('shown.bs.modal', function () {
+			$('#client1').select2({
+				tags: false, // Pas d'ajout dynamique
+				dropdownParent: $('#Modaleadd') // Fix pour afficher la liste déroulante dans un modal
 			});
+		});
+		$('#ModaleUpdate').on('shown.bs.modal', function () {
+			$('#client').select2({
+				tags: false, // Pas d'ajout dynamique
+				dropdownParent: $('#ModaleUpdate') // Fix pour afficher la liste déroulante dans un modal
+			});
+		});
 	</script>
 
 </body>

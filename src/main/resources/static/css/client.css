@@ -13,3 +13,37 @@
 	border: none; 
 	background: transparent;
 }
+
+
+/* Style global de la liste */
+.ui-autocomplete {
+    background-color: #ffffff; /* Couleur de fond */
+    border: 1px solid #ddd; /* Bordure */
+    max-height: 200px; /* Limite la hauteur */
+    overflow-y: auto; /* Ajoute une barre de défilement */
+    font-family: Arial, sans-serif; /* Police */
+    font-size: 14px; /* Taille de texte */
+    z-index: 1050; /* Priorité d'affichage */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombre portée */
+    border-radius: 5px; /* Bords arrondis */
+}
+
+/* Style des éléments individuels */
+.ui-menu-item {
+    padding: 10px 15px; /* Espace autour du texte */
+    cursor: pointer; /* Curseur au survol */
+    border-bottom: 1px solid #f0f0f0; /* Ligne entre les éléments */
+}
+
+/* Style au survol */
+.ui-menu-item:hover {
+    background-color: #f0f0f0; /* Couleur de survol */
+}
+
+/* Mettre en surbrillance l’élément actif */
+.ui-state-focus {
+    background-color: #007bff; /* Couleur de fond */
+    color: #ffffff; /* Couleur du texte */
+    font-weight: bold; /* Texte en gras */
+}
+

@@ -51,6 +51,9 @@ public class CompteService {
 
 
 	}
+	public Compte save(Compte compte) {
+        return compteRepository.save(compte);
+    }
 
 
 

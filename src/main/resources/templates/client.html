@@ -10,7 +10,8 @@
 
 	<!--modale pour ajouter-->
 
-	<button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#Modaleadd"><img src="/image/plus.png" id="add">Ajouter un nouveaux client</button>
+	<button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#Modaleadd"><img
+			src="/image/plus.png" id="add">Ajouter un nouveaux client</button>
 
 	<div class="modal fade" id="Modaleadd" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
@@ -99,7 +100,8 @@
 
 
 
-						<button type="submit" class="btn btn-warning" onclick="updateClient()" id="update">update</button>
+						<button type="submit" class="btn btn-warning" onclick="updateClient()"
+							id="update">update</button>
 					</form>
 
 				</div>
@@ -115,9 +117,16 @@
 
 
 
-	
+
 	<hr />
 	<h1>List of Client</h1>
+	<div class="card-body">
+		<form method="get" th:action="@{index}">
+			<label>Keyword</labe>
+				<input type="text" id="txtRequestor" name="Keyword" th:value="${Keyword}">
+				<button type="submit"> Chercher</button>
+		</form>
+	</div>
 	<table class="table table-striped">
 		<thead>
 			<tr>
@@ -133,18 +142,28 @@
 				<td th:text="${client.cin}" />
 				<td th:text="${client.nom}" />
 				<td th:text="${client.prenom}" />
-				<td><a th:href="|javascript:deleteClient(${client.cin})|"><img src="/image/delete.png" class="image"></a></td>
+				<td><a th:href="|javascript:deleteClient(${client.cin})|"><img src="/image/delete.png"
+							class="image"></a></td>
 				<td>
-					<a th:href="|javascript:edit(${client.cin})|" ><button data-bs-toggle="modal" data-bs-target="#ModaleUpdate" class="button"><img src="/image/pencil.png" class="image"></button></a>
+					<a th:href="|javascript:edit(${client.cin})|"><button data-bs-toggle="modal"
+							data-bs-target="#ModaleUpdate" class="button"><img src="/image/pencil.png"
+								class="image"></button></a>
 				</td>
 			</tr>
 		</tbody>
 	</table>
+	<ul class="nav nav-pills">
+		<li th:each="page,status:${pages}">
+			<a th:class="${status.index == currentPage ? 'btn btn-info ms-1' : 'btn btn-outline ms-1'}" th:text="${status.index}" th:href="@{index(page=${status.index},Keyword=${Keyword})}"></a>
+		</li>
+	</ul>
 
 	<script src="/js/bootstrap.bundle.min.js"></script>
 	<script src="/js/jquery-3.7.1.min.js"></script>
 	<script src="/js/sweetalert.min.js"></script>
 	<script src="/js/clients.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
 </body>
 
 </html>

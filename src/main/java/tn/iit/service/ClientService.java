@@ -2,8 +2,9 @@ package tn.iit.service;
 
 import java.util.List;
 
-
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
@@ -63,6 +64,28 @@ public class ClientService {
 				.orElseThrow(() -> new CompteNotFoundException("Client with cin= " + cin + " not found!"));
 
 	}
+	
+	public Page<Client> findByNom(String nom,int page,int size) {
+
+		return clientRepository.findByNom(nom,PageRequest.of(page,size));
+		
+
+
+	}
+	public Page<Client> findAllPageable(int page,int size) {
+
+		return clientRepository.findAll(PageRequest.of(page,size));
+		
+
+
+	}
+	public Page<Client> getAllClients(Pageable pageable) {
+        return clientRepository.findAll(pageable);
+    }
+
+
+
+
 
 
 
