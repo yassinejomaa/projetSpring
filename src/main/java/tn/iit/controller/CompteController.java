@@ -3,6 +3,10 @@ package tn.iit.controller;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,17 +37,72 @@ public class CompteController {
 	private final ClientService clientService;
 
 	@GetMapping({ "/all", "/", "/index" })
-	public String findAll(Model model) {
-		model.addAttribute("clients", clientService.findAll());
-		model.addAttribute("comptes", compteService.findAll());
-		return "comptes";
+	public String findAll(Model model, 
+	                      @RequestParam(name = "page", defaultValue = "0") int page,
+	                      @RequestParam(name = "size", defaultValue = "5") int size,
+	                      @RequestParam(name = "Keyword", defaultValue = "") String Keyword) {
+	    
+	    // Recherche des clients (pas paginé ici)
+	    model.addAttribute("clients", clientService.findAll());
+
+	    // Recherche des comptes paginés
+	    Page<Compte> comptes;
+
+	    if (Keyword.isEmpty()) {
+	        comptes = compteService.findAllPageable(page, size); // Recherche paginée des comptes sans mot-clé
+	    } else {
+	    	comptes= compteService.findByClient(Keyword, page, size); 
+	    }
+
+	    // Ajout de la liste paginée de comptes au modèle
+	    model.addAttribute("comptes", comptes.getContent()); // Utilisez `getContent()` pour obtenir la liste des comptes
+	    model.addAttribute("pages", new int[comptes.getTotalPages()]); // Génère la pagination
+	    model.addAttribute("currentPage", page); // Numéro de la page actuelle
+	    model.addAttribute("Keyword", Keyword); // Le mot-clé de recherche
+
+	    return "comptes";
 	}
 
+	
 	@ResponseBody // json
+	@GetMapping("/all-json-autocomplete")
+	public List<Compte> findAllJsonForAutocomplet() {
+		return compteService.findAll();
+	}
+	
+	
+	
+	
+	
+	
+	
+	@ResponseBody
+	 @GetMapping("/all-json")
+	    public ResponseEntity<Page<Compte>> getAllComptes(
+	            @RequestParam(defaultValue = "0") int page,
+	            @RequestParam(defaultValue = "5") int size) {
+	        Pageable pageable = PageRequest.of(page, size);
+	        Page<Compte> comptes = compteService.getAllComptes(pageable);
+	        return ResponseEntity.ok(comptes);
+	    }
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	/*@ResponseBody // json
 	@GetMapping("/all-json")
 	public List<Compte> findAllJson() {
 		return compteService.findAll();
-	}
+	}*/
 	@ResponseBody
 	@GetMapping("/all-json-client")
 	public List<Client> findAllJsonClient() {

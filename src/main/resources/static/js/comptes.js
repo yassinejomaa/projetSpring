@@ -71,32 +71,39 @@ function insert() {
 }
 
 
-function getCompte() {
+function getCompte(page = 0, size = 5) {
     $.ajax({
-        url: '/comptes/all-json',
+        url: `/comptes/all-json?page=${page}&size=${size}`,
         type: 'get',
         dataType: 'json',
         contentType: 'application/json; charset=utf-8',
         success: function(response) {
-            if (response != null && response != undefined && response.length > 0) {
-                var object = '';
-                $.each(response, function(index, item) {
-                    object += '<tr>';
-					object += '<td>' + item.rib + '</td>'; 
-                    object += '<td>' + item.client.nomComplet + '</td>'; // Correction ici
-                    object += '<td>' + item.solde + '</td>';
-                    object += '<td>';
-                    object += '<button onclick="deleteCompte(' + item.rib + ')" class="button"><img src="/image/delete.png" class="image"></button>';
-                    object += '</td>';
-                    object += '<td>';
-                    object += '<button onclick="edit(' + item.rib + ')" data-bs-toggle="modal" data-bs-target="#ModaleUpdate" class="button"><img src="/image/pencil.png" class="image"></button>';
-                    object += '</td>';
-                    object += '</tr>';
-					console.log(item);
+            if (response && response.content && response.content.length > 0) {
+                var tableContent = '';
+                $.each(response.content, function(index, item) {
+                    tableContent += `
+                        <tr>
+                            <td>${item.rib}</td>
+                            <td>${item.client.nomComplet}</td>
+                            <td>${item.solde}</td>
+                            <td>
+                                <button onclick="deleteCompte('${item.rib}')" class="button">
+                                    <img src="/image/delete.png" class="image">
+                                </button>
+                            </td>
+                            <td>
+                                <button onclick="edit('${item.rib}')" data-bs-toggle="modal" data-bs-target="#ModaleUpdate" class="button">
+                                    <img src="/image/pencil.png" class="image">
+                                </button>
+                            </td>
+                        </tr>`;
                 });
 
-                $('#tbody').html(object);
-				 
+                $('#tbody').html(tableContent); // Mise à jour du tableau
+                updatePagination(response); // Mise à jour de la pagination
+            } else {
+                $('#tbody').html('<tr><td colspan="5">Aucun compte trouvé.</td></tr>');
+                $('#pagination').html(''); // Vider la pagination
             }
         },
         error: function() {
@@ -104,6 +111,22 @@ function getCompte() {
         }
     });
 }
+
+function updatePagination(response) {
+    var pagination = '';
+    if (response.totalPages > 1) {
+        for (let i = 0; i < response.totalPages; i++) {
+            pagination += `
+                <li>
+                    <a class="${i === response.pageable.pageNumber ? 'btn btn-info ms-1' : 'btn btn-outline ms-1'}"
+                        onclick="getCompte(${i})">${i + 1}</a>
+                </li>`;
+        }
+    }
+    $('#pagination').html(pagination);
+    console.log("Pagination mise à jour");
+}
+
 
 
 
@@ -169,3 +192,53 @@ function updateCompte() {
         }
     });
 }
+
+function autocomplet() {
+	$.ajax({
+		url: '/comptes/all-json-autocomplete',
+		type: 'get',
+		dataType: 'json',
+		contentType: 'application/json; charset=utf-8',
+		success: function(response) {
+			if (response && response.length > 0) {
+				// Supprimer les doublons en utilisant l'attribut 'cin' comme clé unique
+				const uniqueClients = [];
+				const seenCINs = new Set();
+
+				response.forEach(item => {
+					if (!seenCINs.has(item.client.cin)) {
+						seenCINs.add(item.client.cin);
+						uniqueClients.push(item.client);
+					}
+				});
+
+				// Transformer les données pour l'autocomplétion
+				const transformedData = uniqueClients.map(client => ({
+					label: client.nomComplet, // Utilise le nom comme label pour l'autocomplétion
+					value: client.cin         // Utilise le CIN comme valeur de l'élément sélectionné
+				}));
+
+				// Initialiser l'autocomplétion avec les données transformées
+				$('#txtRequestor').autocomplete({
+					source: transformedData,
+					select: function(event, ui) {
+						if (ui.item) {
+							console.log('Elément sélectionné :', ui.item.value);
+							// Ajoutez ici toute action nécessaire après la sélection d'un élément
+						}
+					},
+					change: function(event, ui) {
+						if (!ui.item) {
+							alert('Aucun élément sélectionné');
+						}
+					}
+				});
+			}
+		},
+		error: function() {
+			alert('Impossible de lire les données');
+		}
+	});
+}
+
+autocomplet();

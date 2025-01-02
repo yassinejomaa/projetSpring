@@ -136,6 +136,13 @@
 
 	<hr />
 	<h1>List of Comptes</h1>
+	<div class="card-body">
+		<form method="get" th:action="@{index}">
+			<label>Recherche par nom Client</labe>
+				<input type="text" id="txtRequestor" name="Keyword" th:value="${Keyword}">
+				<button type="submit"> Chercher</button>
+		</form>
+	</div>
 	<table class="table table-striped">
 		<thead>
 			<tr>
@@ -144,29 +151,40 @@
 				<th>solde</th>
 				<th>delete-ajax</th>
 				<th>Edit</th>
-
 			</tr>
 		</thead>
 		<tbody id="tbody">
-			<tr th:id="${compte.rib}" th:each="compte: ${comptes}">
+			<tr th:each="compte : ${comptes}">
 				<td th:text="${compte.rib}" />
 				<td th:text="${compte.client.nomComplet}" />
 				<td th:text="${compte.solde}" />
 				<td><a th:href="|javascript:deleteCompte(${compte.rib})|"><img src="/image/delete.png"
 							class="image"></a></td>
 				<td>
-					<a th:href="|javascript:edit(${compte.rib})|"><button data-bs-toggle="modal"
-							data-bs-target="#ModaleUpdate" class="button"><img src="/image/pencil.png"
-								class="image"></button></a>
+					<a th:href="|javascript:edit(${compte.rib})|">
+						<button data-bs-toggle="modal" data-bs-target="#ModaleUpdate" class="button">
+							<img src="/image/pencil.png" class="image">
+						</button>
+					</a>
 				</td>
 			</tr>
 		</tbody>
 	</table>
+
+	<ul class="nav nav-pills" id="pagination">
+		<li th:each="page, status : ${pages}">
+			<a th:class="${status.index == currentPage ? 'btn btn-info ms-1' : 'btn btn-outline ms-1'}"
+				th:text="${status.index}" th:href="@{index(page=${status.index}, Keyword=${Keyword})}"></a>
+		</li>
+	</ul>
+
 	<script src="/js/select2.min.js"></script>
 	<script src="/js/bootstrap.bundle.min.js"></script>
 	<script src="/js/jquery-3.7.1.min.js"></script>
 	<script src="/js/sweetalert.min.js"></script>
 	<script src="/js/comptes.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
 	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 	<script>
 		// Initialisation de Select2 après l'ouverture du modal
